@@ -1,0 +1,38 @@
+
+# Ignore video files
+*.mp4
+*.avi
+*.mkv
+
+# Ignore large data folders
+dossier_de_videos/
+datasets/
+
+# Ignore Node.js dependencies
+node_modules/
+
+# Keep local datasets and generated builds out of source pushes.
+ai-service/dataset/train_images/
+ai-service/dataset/test_images/
+ai-service/dataset/train_tfrecords/
+ai-service/dataset/test_tfrecords/
+ai-service/dataset/verifier/
+ai-service/test_verifier/
+ai-service/models/*_candidate.keras
+ai-service/models/*_test_report.json
+frontend/dist/
+.vscode/
+
+# Protect environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Ignore Python virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Ignore uploaded files
+uploads/

@@ -1,0 +1,814 @@
+
+/* =========================================================
+   1. GOOGLE FONTS
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+
+/* =========================================================
+   2. ROOT VARIABLES AND GLOBAL STYLES
+   ========================================================= */
+
+:root {
+    font-family: 'DM Sans', sans-serif;
+    color: #abdfc4;
+    background: #f5f2f2;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+
+/* =========================================================
+   3. MAIN APPLICATION LAYOUT
+   ========================================================= */
+
+.app-shell {
+    max-width: 1180px;
+    margin: auto;
+    padding: 0 28px 28px;
+}
+
+
+/* =========================================================
+   4. HEADER AND BRAND
+   ========================================================= */
+
+.topbar {
+    height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e3e9e1;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand img {
+    width: 46px;
+    height: 46px;
+}
+
+.brand strong,
+.brand span {
+    display: block;
+}
+
+.brand strong {
+    font: 800 19px Manrope, sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.brand span {
+    font-size: 12px;
+    color: #75847a;
+    margin-top: 3px;
+}
+
+.pill {
+    background: #e3f3e6;
+    color: #246942;
+    border: 1px solid #c9e8d0;
+    padding: 8px 13px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.service-status {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 7px 10px;
+    border-radius: 99px;
+    background: #fff2e8;
+    color: #8f4c20;
+}
+
+.service-ready {
+    background: #e8f4eb;
+    color: #28744a;
+}
+
+
+/* =========================================================
+   5. HERO SECTION
+   ========================================================= */
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 35px;
+    padding: 38px 0 34px;
+}
+
+.eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    font-weight: 800;
+    color: #318256;
+    margin: 0 0 10px;
+}
+
+.hero h1 {
+    font: 800 clamp(30px, 4vw, 47px) / 1.12 Manrope, sans-serif;
+    letter-spacing: -1.6px;
+    margin: 0 0 16px;
+    max-width: 600px;
+}
+
+.hero-copy > p:last-child {
+    color: #68796d;
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0;
+}
+
+.hero-image {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 1px solid #d9e5d7;
+    background: #e6efe3;
+}
+
+
+/* =========================================================
+   6. WORKSPACE AND GENERAL PANELS
+   ========================================================= */
+
+.workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid #e4eae2;
+    border-radius: 19px;
+    padding: 24px;
+    box-shadow: 0 8px 28px #f38f0410;
+    min-width: 0;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-heading h2 {
+    font: 800 20px Manrope, sans-serif;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.section-heading .eyebrow {
+    margin-bottom: 6px;
+}
+
+.step-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: #edf6ed;
+    color: #32764b;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.muted {
+    color: #718077;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   7. IMAGE UPLOAD AND PREVIEW
+   ========================================================= */
+
+.preview {
+    height: 245px;
+    margin: 18px 0 14px;
+    border: 1.5px dashed #b9cbb9;
+    border-radius: 14px;
+    background: #f6f9f4;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+.preview > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.empty-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #708575;
+    font-size: 12px;
+}
+
+.empty-preview strong {
+    font-size: 14px;
+    color: #4b6351;
+}
+
+.leaf-icon {
+    font-size: 35px;
+    color: #4b9864;
+}
+
+.file-name {
+    font-size: 11px;
+    color: #607267;
+    overflow-wrap: anywhere;
+}
+
+.privacy-note {
+    font-size: 10px;
+    line-height: 1.6;
+    color: #8b978e;
+    margin-bottom: 0;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* =========================================================
+   8. BUTTONS AND ACTIONS
+   ========================================================= */
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    flex: 1;
+}
+
+.button,
+button {
+    font: 700 12px 'DM Sans', sans-serif;
+    cursor: pointer;
+}
+
+.secondary {
+    background: white;
+    border: 1px solid #d4dfd3;
+    color: #345441;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.secondary:hover {
+    background: #f3f8f1;
+}
+
+.primary {
+    border: 0;
+    background: #207348;
+    color: white;
+    border-radius: 11px;
+    padding: 14px 16px;
+    box-shadow: 0 5px 12px #20734820;
+}
+
+.primary:hover {
+    background: #185d39;
+}
+
+.primary:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.analyze {
+    width: 100%;
+    margin-top: 14px;
+}
+
+
+/* =========================================================
+   9. WAITING / EMPTY RESULT STATE
+   ========================================================= */
+
+.waiting {
+    padding-top: 25px;
+}
+
+.waiting-mark {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    background: #edf7ed;
+    color: #328351;
+    font-size: 34px;
+}
+
+.waiting h3 {
+    font: 800 17px Manrope, sans-serif;
+    margin: 17px 0 7px;
+}
+
+.waiting > p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #818175;
+    max-width: 380px;
+}
+
+.result-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: #f5f8f3;
+    border-radius: 12px;
+    margin-top: 22px;
+}
+
+.result-placeholder > span {
+    font-size: 24px;
+}
+
+.result-placeholder strong,
+.result-placeholder small {
+    display: block;
+}
+
+.result-placeholder strong {
+    font-size: 12px;
+}
+
+.result-placeholder small {
+    font-size: 11px;
+    color: #7b897e;
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   10. DISEASE DETECTION RESULTS
+   ========================================================= */
+
+.result-content {
+    padding-top: 20px;
+}
+
+.status-line {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #398454;
+    font-weight: 800;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #45a66b;
+    margin-right: 6px;
+}
+
+.result-content h3 {
+    font: 800 24px / 1.25 Manrope, sans-serif;
+    margin: 12px 0 5px;
+}
+
+.result-content h4 {
+    font-size: 13px;
+    margin: 21px 0 7px;
+}
+
+.result-content p,
+.result-content li {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #66766b;
+}
+
+.result-content ul {
+    padding-left: 18px;
+}
+
+
+/* =========================================================
+   11. CONFIDENCE SCORE AND PROGRESS METER
+   ========================================================= */
+
+.confidence {
+    background: #f6f9f4;
+    padding: 13px;
+    border-radius: 12px;
+    margin-top: 18px;
+}
+
+.confidence > div:first-child {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6b7a6f;
+}
+
+.confidence strong {
+    font-size: 13px;
+    color: #254d34;
+}
+
+.meter {
+    height: 6px;
+    background: #e0e9dd;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.meter span {
+    display: block;
+    height: 100%;
+    background: #37945c;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   12. DISCLAIMERS AND ERROR MESSAGES
+   ========================================================= */
+
+.disclaimer {
+    background: #fff7e7;
+    border-left: 3px solid #e2b654;
+    padding: 10px;
+    border-radius: 0 8px 8px 0;
+}
+
+.error {
+    background: #fff0ed;
+    border: 1px solid #ffd3ca;
+    color: #a53c2a;
+    border-radius: 9px;
+    padding: 11px;
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   13. FARMER INFORMATION FORM
+   ========================================================= */
+
+.farmer-panel {
+    margin-top: 20px;
+}
+
+.farmer-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.farmer-form label,
+.farmer-select {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #4b6351;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.farmer-form input,
+.farmer-form select,
+.farmer-select select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #d4dfd3;
+    border-radius: 9px;
+    background: white;
+    padding: 10px;
+    color: #345441;
+    font: 500 12px 'DM Sans', sans-serif;
+}
+
+.farmer-form button {
+    min-height: 42px;
+}
+
+.farmer-select {
+    max-width: 460px;
+    margin-top: 16px;
+}
+
+.farmer-message {
+    font-size: 12px;
+    color: #28744a;
+}
+
+.uncertain-candidates {
+    margin-top: 10px;
+    padding: 12px;
+    border: 1px solid #f0dfb6;
+    border-radius: 10px;
+    background: #fffaf0;
+    color: #665329;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.uncertain-candidates ul {
+    margin: 7px 0;
+    padding-left: 18px;
+}
+
+.uncertain-candidates small {
+    display: block;
+    color: #796b4b;
+}
+
+
+/* =========================================================
+   14. PREDICTION HISTORY
+   ========================================================= */
+
+.history-panel {
+    margin-top: 20px;
+}
+
+.history-list {
+    margin-top: 12px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1eb;
+}
+
+.history-item:last-child {
+    border-bottom: 0;
+}
+
+.history-leaf {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: #eff7ed;
+}
+
+.history-item > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-item strong,
+.history-item small {
+    display: block;
+}
+
+.history-item strong {
+    font-size: 12px;
+}
+
+.history-item small {
+    font-size: 10px;
+    color: #068639;
+    margin-top: 4px;
+}
+
+.history-confidence {
+    font-size: 12px;
+    font-weight: 800;
+    color: #37784c;
+}
+
+
+/* =========================================================
+   15. CASSAVA CHATBOT
+   ========================================================= */
+
+.chat-panel {
+    margin-top: 20px;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 12px 2px;
+}
+
+.chat-message {
+    max-width: 86%;
+    padding: 12px 14px;
+    border: 1px solid #e4eae2;
+    border-radius: 14px;
+    background: #f6f9f4;
+}
+
+.chat-message strong {
+    font-size: 11px;
+    color: #345441;
+}
+
+.chat-message p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #52675a;
+    white-space: pre-wrap;
+}
+
+.chat-message small {
+    display: block;
+    margin-top: 8px;
+    font-size: 10px;
+    color: #7c897f;
+    line-height: 1.5;
+}
+
+.chat-user {
+    align-self: flex-end;
+    background: #e8f4eb;
+    border-color: #d2e8d8;
+}
+
+.chat-assistant {
+    align-self: flex-start;
+}
+
+.chat-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.chat-form input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border: 1px solid #d4dfd3;
+    border-radius: 10px;
+    padding: 11px 13px;
+    font: 500 12px 'DM Sans', sans-serif;
+    color: #345441;
+}
+
+.chat-form button {
+    min-width: 76px;
+}
+
+
+/* =========================================================
+   16. FOOTER
+   ========================================================= */
+
+footer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 25px 2px 0;
+    color: #7c897f;
+    font-size: 10px;
+}
+
+footer img {
+    width: 25px;
+    height: 25px;
+}
+
+footer strong {
+    color: #355640;
+}
+
+.footer-right {
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   17. RESPONSIVE DESIGN — MOBILE DEVICES
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    /* Main layout */
+    .app-shell {
+        padding: 0 15px 22px;
+    }
+
+    /* Header */
+    .topbar {
+        height: auto;
+        min-height: 74px;
+        gap: 8px;
+    }
+
+    .header-status {
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .service-status {
+        font-size: 9px;
+    }
+
+    /* Hero section */
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 28px 0;
+    }
+
+    .hero-image {
+        height: 170px;
+        grid-row: 1;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    /* Workspace */
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 19px;
+    }
+
+    /* Image preview */
+    .preview {
+        height: 225px;
+    }
+
+    /* Farmer form */
+    .farmer-form {
+        grid-template-columns: 1fr;
+    }
+
+    /* Chatbot */
+    .chat-form {
+        gap: 7px;
+    }
+
+    .chat-message {
+        max-width: 96%;
+    }
+
+    /* Footer */
+    .footer-right {
+        display: none;
+    }
+}
