@@ -49,3 +49,125 @@ body{background:#ffffff;color:#f70606}.portal-loading{min-height:100vh;display:g
     max-height: 350px;
   }
 }
+
+/* CADD IoT development preview */
+.cadd-iot-panel {
+  margin-top: 24px;
+}
+
+.cadd-iot-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #fff3d6;
+  color: #805600;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cadd-iot-device {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin: 18px 0;
+  background: #f5f8f4;
+  border-radius: 12px;
+}
+
+.cadd-iot-device > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cadd-iot-device small,
+.cadd-iot-card small {
+  color: #718071;
+  font-size: 12px;
+}
+
+.cadd-iot-device-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border-radius: 50%;
+  background: #20a464;
+}
+
+.cadd-iot-refresh {
+  margin-left: auto;
+  color: #718071;
+  font-size: 12px;
+}
+
+.cadd-iot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.cadd-iot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #e5ebe4;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.cadd-iot-card > span {
+  color: #647364;
+  font-size: 13px;
+}
+
+.cadd-iot-card > strong {
+  color: #234d35;
+  font-size: 28px;
+}
+
+.cadd-iot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  color: #718071;
+  font-size: 12px;
+  margin: 12px 0 22px;
+}
+
+.cadd-iot-history {
+  margin-top: 24px;
+}
+
+.cadd-iot-history .section-heading h3 {
+  margin: 0;
+}
+
+.cadd-iot-disclaimer {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff8e8;
+  color: #775d24;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .cadd-iot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cadd-iot-device {
+    flex-wrap: wrap;
+  }
+
+  .cadd-iot-refresh {
+    width: 100%;
+    margin-left: 22px;
+  }
+}

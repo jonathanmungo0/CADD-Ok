@@ -175,6 +175,12 @@ function FarmerDashboard({ user, token, onUserChange, onSignOut }) {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [systemHealth, setSystemHealth] = useState(null);
+  // Shared Wokwi IoT development feed
+const [iotLatest, setIotLatest] = useState(null);
+const [iotHistory, setIotHistory] = useState([]);
+const [iotError, setIotError] = useState('');
+const [iotLoading, setIotLoading] = useState(true);
+const [iotUpdatedAt, setIotUpdatedAt] = useState(null);
   const [error, setError] = useState('');
   const [uncertainCandidates, setUncertainCandidates] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -202,7 +208,47 @@ function FarmerDashboard({ user, token, onUserChange, onSignOut }) {
   useEffect(() => {
     loadHistory();
     request('/api/health', token).then(setSystemHealth).catch(() => setSystemHealth({ ai_service: { status: 'unavailable' } }));
-  }, []);
+  }, []);  // Load the shared Wokwi sensor feed and refresh every 5 seconds.
+useEffect(() => {
+  let active = true;
+  let inFlight = false;
+
+  async function loadIoTReadings() {
+    if (inFlight) return;
+    inFlight = true;
+
+    try {
+      const [latestResponse, historyResponse] = await Promise.all([
+        request('/api/iot/latest', token),
+        request('/api/iot/history', token)
+      ]);
+
+      if (!active) return;
+
+      setIotLatest(latestResponse.data || null);
+      setIotHistory(
+        Array.isArray(historyResponse.data) ? historyResponse.data : []
+      );
+      setIotError('');
+      setIotUpdatedAt(new Date());
+    } catch (iotRequestError) {
+      if (active) setIotError(iotRequestError.message);
+    } finally {
+      inFlight = false;
+      if (active) setIotLoading(false);
+    }
+  }
+
+  loadIoTReadings();
+
+  const refreshTimer = setInterval(loadIoTReadings, 5000);
+
+  return () => {
+    active = false;
+    clearInterval(refreshTimer);
+  };
+}, [token]);
+
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
  function chooseImage(nextFile) {
@@ -364,6 +410,143 @@ function FarmerDashboard({ user, token, onUserChange, onSignOut }) {
         {result ? <PredictionResult result={result} /> : <div className="waiting"><div className="waiting-mark">⌁</div><h3>Your result will appear here</h3><p>After analysis, you will see the predicted condition, confidence score, and recommended next steps.</p></div>}
       </div>
     </section>
+
+        {/* SHARED WOKWI IOT DEVELOPMENT PREVIEW */}
+    <section className="panel cadd-iot-panel">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">IOT SENSOR MONITORING</p>
+          <h2>Farm environment readings</h2>
+        </div>
+        <span className="cadd-iot-badge">Wokwi simulation</span>
+      </div>
+
+      <div className="cadd-iot-device">
+        <span className="cadd-iot-device-dot"></span>
+        <div>
+          <strong>CADD-WOKWI-ESP32</strong>
+          <small>Shared development test device</small>
+        </div>
+        <span className="cadd-iot-refresh">Refreshes every 5 seconds</span>
+      </div>
+
+      {iotError && (
+        <div className="error" role="alert">
+          Could not load IoT readings: {iotError}
+        </div>
+      )}
+
+      {iotLoading && !iotLatest ? (
+        <p className="muted">Loading sensor readings…</p>
+      ) : (
+        <>
+          <div className="cadd-iot-grid">
+            <article className="cadd-iot-card">
+              <span>🌡️ Temperature</span>
+              <strong>
+                {iotLatest?.temperature != null
+                  ? `${Number(iotLatest.temperature).toFixed(1)} °C`
+                  : '—'}
+              </strong>
+              <small>Air temperature</small>
+            </article>
+
+            <article className="cadd-iot-card">
+              <span>💧 Humidity</span>
+              <strong>
+                {iotLatest?.humidity != null
+                  ? `${Number(iotLatest.humidity).toFixed(1)} %`
+                  : '—'}
+              </strong>
+              <small>Relative air humidity</small>
+            </article>
+
+            <article className="cadd-iot-card">
+              <span>🌱 Soil moisture</span>
+              <strong>
+                {iotLatest?.soil_moisture != null
+                  ? `${Number(iotLatest.soil_moisture).toFixed(1)} %`
+                  : '—'}
+              </strong>
+              <small>Soil moisture level</small>
+            </article>
+          </div>
+
+          <div className="cadd-iot-meta">
+            <span>
+              Latest sensor reading:{' '}
+              {iotLatest?.received_at
+                ? new Date(iotLatest.received_at).toLocaleString()
+                : 'No reading received yet'}
+            </span>
+            <span>
+              Dashboard refreshed:{' '}
+              {iotUpdatedAt ? iotUpdatedAt.toLocaleTimeString() : '—'}
+            </span>
+          </div>
+        </>
+      )}
+
+      <div className="cadd-iot-history">
+        <div className="section-heading">
+          <div>
+            <h3>Recent sensor history</h3>
+            <p className="muted">Most recent readings received by CADD-System</p>
+          </div>
+          <span className="step-icon">{iotHistory.length}</span>
+        </div>
+
+        {iotHistory.length > 0 ? (
+          <div className="table-scroll">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Temperature</th>
+                  <th>Humidity</th>
+                  <th>Soil moisture</th>
+                </tr>
+              </thead>
+              <tbody>
+                {iotHistory.slice(0, 10).map((reading) => (
+                  <tr key={reading.id}>
+                    <td>
+                      {reading.received_at
+                        ? new Date(reading.received_at).toLocaleString()
+                        : '—'}
+                    </td>
+                    <td>
+                      {reading.temperature != null
+                        ? `${Number(reading.temperature).toFixed(1)} °C`
+                        : '—'}
+                    </td>
+                    <td>
+                      {reading.humidity != null
+                        ? `${Number(reading.humidity).toFixed(1)} %`
+                        : '—'}
+                    </td>
+                    <td>
+                      {reading.soil_moisture != null
+                        ? `${Number(reading.soil_moisture).toFixed(1)} %`
+                        : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="muted">No sensor history is available yet.</p>
+        )}
+      </div>
+
+      <p className="cadd-iot-disclaimer">
+        Development preview: these readings come from a shared Wokwi test
+        device. They do not represent measurements from your own farm.
+      </p>
+    </section>
+
+
     <section className="panel history-panel">
       <div className="section-heading"><div><p className="eyebrow">YOUR RECORDS</p><h2>Prediction history</h2></div><button className="text-button" onClick={loadHistory}>Refresh ↻</button></div>
       {history.length ? <div className="history-list">{history.map(item => <article className="history-item" key={item.id}><span className="history-leaf">🌱</span><div><strong>{item.disease_name}</strong><small>{new Date(item.created_at).toLocaleString()}</small>{item.recommendations?.length > 0 && <details><summary>View recommendations</summary><ul>{item.recommendations.map((recommendation, index) => <li key={index}>{recommendation}</li>)}</ul></details>}</div><span className="history-confidence">{item.confidence == null ? '—' : `${(Number(item.confidence) * 100).toFixed(1)}%`}</span></article>)}</div> : <p className="muted">Your saved predictions will appear here after your first analysis.</p>}

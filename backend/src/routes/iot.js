@@ -1,4 +1,4 @@
-
+import { requireAuth } from '../auth.js';
 import express from 'express';
 import { pool } from '../config/db.js';
 
@@ -70,7 +70,7 @@ router.post('/readings', async (req, res) => {
 
 // GET /api/iot/latest
 // Return the most recent reading across all devices.
-router.get('/latest', async (_req, res) => {
+router.get('/latest', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, device_id, temperature, humidity,
@@ -98,7 +98,7 @@ router.get('/latest', async (_req, res) => {
 
 // GET /api/iot/history
 // Return the latest 100 readings.
-router.get('/history', async (_req, res) => {
+router.get('/history', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, device_id, temperature, humidity,

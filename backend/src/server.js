@@ -33,7 +33,8 @@ const configuredFrontendOrigins = (process.env.FRONTEND_ORIGIN || '')
 const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://localhost:5174',
-  'http://10.7.32.210:4000',
+  'http://10.7.32.61:4000',
+   'http://10.7.32.61:5173',
   ...configuredFrontendOrigins
 ]);
 
