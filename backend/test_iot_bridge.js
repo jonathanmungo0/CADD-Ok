@@ -1,6 +1,7 @@
 ﻿import dotenv from 'dotenv';
+import { fileURLToPath } from 'node:url';
 
-dotenv.config();
+dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 
 const token = process.env.IOT_DEVICE_TOKEN;
 
@@ -9,7 +10,10 @@ if (!token) {
   process.exit(1);
 }
 
-const response = await fetch('http://127.0.0.1:4100/readings', {
+const bridgeUrl = (process.env.IOT_BRIDGE_URL || 'http://127.0.0.1:4100')
+  .replace(/\/+$/, '');
+
+const response = await fetch(`${bridgeUrl}/readings`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

@@ -57,3 +57,117 @@ CREATE TABLE IF NOT EXISTS system_activity (
 );
 
 CREATE INDEX IF NOT EXISTS idx_system_activity_created_at ON system_activity(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS sensor_readings (
+  id BIGSERIAL PRIMARY KEY,
+  device_id VARCHAR(100) NOT NULL,
+  temperature DOUBLE PRECISION NOT NULL
+    CONSTRAINT sensor_readings_temperature_check
+    CHECK (temperature >= -40 AND temperature <= 80),
+  humidity DOUBLE PRECISION NOT NULL
+    CONSTRAINT sensor_readings_humidity_check
+    CHECK (humidity >= 0 AND humidity <= 100),
+  soil_moisture DOUBLE PRECISION NOT NULL
+    CONSTRAINT sensor_readings_soil_moisture_check
+    CHECK (soil_moisture >= 0 AND soil_moisture <= 100),
+  soil_raw INTEGER,
+  soil_status VARCHAR(20),
+  pump_on BOOLEAN,
+  led_status VARCHAR(3),
+  gpio_output VARCHAR(4),
+  received_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT sensor_readings_soil_raw_check
+    CHECK (soil_raw IS NULL OR soil_raw BETWEEN 0 AND 4095),
+  CONSTRAINT sensor_readings_soil_status_check
+    CHECK (soil_status IS NULL OR soil_status IN ('TOO_DRY', 'MODERATE', 'MOIST_ENOUGH')),
+  CONSTRAINT sensor_readings_led_status_check
+    CHECK (led_status IS NULL OR led_status IN ('ON', 'OFF')),
+  CONSTRAINT sensor_readings_gpio_output_check
+    CHECK (gpio_output IS NULL OR gpio_output IN ('HIGH', 'LOW')),
+  CONSTRAINT sensor_readings_irrigation_state_check
+    CHECK (
+      (pump_on IS NULL AND led_status IS NULL AND gpio_output IS NULL)
+      OR
+      (
+        pump_on IS NOT NULL
+        AND led_status IS NOT NULL
+        AND gpio_output IS NOT NULL
+        AND led_status = CASE WHEN pump_on THEN 'ON' ELSE 'OFF' END
+        AND gpio_output = CASE WHEN pump_on THEN 'HIGH' ELSE 'LOW' END
+      )
+    )
+);
+
+ALTER TABLE sensor_readings
+  ADD COLUMN IF NOT EXISTS soil_raw INTEGER,
+  ADD COLUMN IF NOT EXISTS soil_status VARCHAR(20),
+  ADD COLUMN IF NOT EXISTS pump_on BOOLEAN,
+  ADD COLUMN IF NOT EXISTS led_status VARCHAR(3),
+  ADD COLUMN IF NOT EXISTS gpio_output VARCHAR(4);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'sensor_readings_soil_raw_check'
+      AND conrelid = 'public.sensor_readings'::regclass
+  ) THEN
+    ALTER TABLE sensor_readings
+      ADD CONSTRAINT sensor_readings_soil_raw_check
+      CHECK (soil_raw IS NULL OR soil_raw BETWEEN 0 AND 4095);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'sensor_readings_soil_status_check'
+      AND conrelid = 'public.sensor_readings'::regclass
+  ) THEN
+    ALTER TABLE sensor_readings
+      ADD CONSTRAINT sensor_readings_soil_status_check
+      CHECK (soil_status IS NULL OR soil_status IN ('TOO_DRY', 'MODERATE', 'MOIST_ENOUGH'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'sensor_readings_led_status_check'
+      AND conrelid = 'public.sensor_readings'::regclass
+  ) THEN
+    ALTER TABLE sensor_readings
+      ADD CONSTRAINT sensor_readings_led_status_check
+      CHECK (led_status IS NULL OR led_status IN ('ON', 'OFF'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'sensor_readings_gpio_output_check'
+      AND conrelid = 'public.sensor_readings'::regclass
+  ) THEN
+    ALTER TABLE sensor_readings
+      ADD CONSTRAINT sensor_readings_gpio_output_check
+      CHECK (gpio_output IS NULL OR gpio_output IN ('HIGH', 'LOW'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'sensor_readings_irrigation_state_check'
+      AND conrelid = 'public.sensor_readings'::regclass
+  ) THEN
+    ALTER TABLE sensor_readings
+      ADD CONSTRAINT sensor_readings_irrigation_state_check
+      CHECK (
+        (pump_on IS NULL AND led_status IS NULL AND gpio_output IS NULL)
+        OR
+        (
+          pump_on IS NOT NULL
+          AND led_status IS NOT NULL
+          AND gpio_output IS NOT NULL
+          AND led_status = CASE WHEN pump_on THEN 'ON' ELSE 'OFF' END
+          AND gpio_output = CASE WHEN pump_on THEN 'HIGH' ELSE 'LOW' END
+        )
+      );
+  END IF;
+END
+$$;
+
+CREATE INDEX IF NOT EXISTS idx_sensor_readings_device_time
+  ON sensor_readings (device_id, received_at DESC);

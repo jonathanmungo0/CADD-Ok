@@ -2,11 +2,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import crypto from 'node:crypto';
+import { validateIotReading } from './src/iotValidation.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = 4100;
+const HOST = process.env.IOT_BRIDGE_HOST || '0.0.0.0';
+const PORT = Number(process.env.IOT_BRIDGE_PORT || 4100);
+const BACKEND_URL = (process.env.IOT_BACKEND_URL || 'http://127.0.0.1:4000')
+  .replace(/\/+$/, '');
 
 const DEVICE_TOKEN = process.env.IOT_DEVICE_TOKEN;
 const DEMO_TOKEN = process.env.IOT_DEMO_TOKEN;
@@ -18,6 +22,16 @@ app.use(express.json({ limit: '2kb' }));
 
 if (!DEVICE_TOKEN || !DEMO_TOKEN) {
   console.error('Missing IoT token configuration in .env');
+  process.exit(1);
+}
+
+if (DEVICE_TOKEN === DEMO_TOKEN) {
+  console.error('IOT_DEVICE_TOKEN and IOT_DEMO_TOKEN must be different.');
+  process.exit(1);
+}
+
+if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
+  console.error('IOT_BRIDGE_PORT must be a valid TCP port.');
   process.exit(1);
 }
 
@@ -64,36 +78,18 @@ app.get('/health', (_req, res) => {
 });
 
 app.post('/readings', requireDeviceToken, async (req, res) => {
-  const {
-    device_id,
-    temperature,
-    humidity,
-    soil_moisture
-  } = req.body || {};
+  const { reading, error } = validateIotReading(req.body);
 
-  if (
-    typeof device_id !== 'string' ||
-    !device_id.trim() ||
-    device_id.trim().length > 100 ||
-    typeof temperature !== 'number' ||
-    typeof humidity !== 'number' ||
-    typeof soil_moisture !== 'number' ||
-    !Number.isFinite(temperature) ||
-    !Number.isFinite(humidity) ||
-    !Number.isFinite(soil_moisture) ||
-    temperature < -40 || temperature > 80 ||
-    humidity < 0 || humidity > 100 ||
-    soil_moisture < 0 || soil_moisture > 100
-  ) {
+  if (error) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid sensor reading'
+      message: error
     });
   }
 
   // Restrict the public demonstration credential.
   if (req.isDemoDevice) {
-    if (device_id !== DEMO_DEVICE_ID) {
+    if (reading.device_id !== DEMO_DEVICE_ID) {
       return res.status(403).json({
         success: false,
         message: 'Demo credential is restricted to the Wokwi device'
@@ -114,22 +110,27 @@ app.post('/readings', requireDeviceToken, async (req, res) => {
 
   try {
     const upstream = await fetch(
-      'http://127.0.0.1:4000/api/iot/readings',
+      `${BACKEND_URL}/api/iot/readings`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${DEVICE_TOKEN}`
         },
-        body: JSON.stringify({
-          device_id: device_id.trim(),
-          temperature,
-          humidity,
-          soil_moisture
-        })
+        body: JSON.stringify(reading),
+        signal: AbortSignal.timeout(5000)
       }
     );
 
-    const result = await upstream.json();
+    let result;
+    try {
+      result = await upstream.json();
+    } catch {
+      result = {
+        success: false,
+        message: 'CADD backend returned an invalid response.'
+      };
+    }
 
     return res.status(upstream.status).json(result);
 
@@ -143,6 +144,6 @@ app.post('/readings', requireDeviceToken, async (req, res) => {
   }
 });
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`CADD IoT Bridge running on http://127.0.0.1:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`CADD IoT Bridge running on http://${HOST}:${PORT}`);
 });
